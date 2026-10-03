@@ -518,7 +518,7 @@ export default function Sidebar() {
             {isAuthenticated && admin ? (
               /* LOGGED IN USER */
               <Link
-                href="/profile"
+                href="/admin/profile"
                 className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-50 transition"
               >
                 <div className="w-9 h-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
