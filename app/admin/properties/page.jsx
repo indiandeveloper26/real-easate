@@ -97,6 +97,20 @@ export default function ListPropertyPage() {
     setPreviews(newPreviews);
   };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -123,25 +137,195 @@ export default function ListPropertyPage() {
     setSubmitting(true);
 
     try {
+      // =========================
+      // 1. UPLOAD IMAGES
+      // =========================
+
+      const uploadedImageUrls = [];
+
+      for (const image of images) {
+        const imageData = new FormData();
+
+        imageData.append("file", image);
+
+        imageData.append(
+          "upload_preset",
+          process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
+        );
+
+        const cloudinaryUrl =
+          `https://api.cloudinary.com/v1_1/` +
+          `${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}` +
+          `/image/upload`;
+
+        console.log("Cloudinary URL:", cloudinaryUrl);
+
+        const uploadResponse = await fetch(cloudinaryUrl, {
+          method: "POST",
+          body: imageData,
+        });
+
+        const uploadData = await uploadResponse.json();
+
+        console.log("CLOUDINARY RESPONSE:", uploadData);
+
+        if (!uploadResponse.ok) {
+          throw new Error(
+            uploadData?.error?.message || "Image upload failed"
+          );
+        }
+
+        if (!uploadData.secure_url) {
+          throw new Error("Cloudinary did not return image URL");
+        }
+
+        uploadedImageUrls.push(uploadData.secure_url);
+      }
+
+      // =========================
+      // 2. PROPERTY PAYLOAD
+      // =========================
+
       const payload = {
-        ...form,
-        images,
+        listingType: form.listingType,
+        propertyType: form.propertyType,
+
+        title: form.title.trim(),
+
+        price: Number(form.price.replace(/,/g, "")),
+
+        bedrooms: Number(form.bedrooms || 0),
+        bathrooms: Number(form.bathrooms || 0),
+        area: Number(form.area || 0),
+
+        furnishing: form.furnishing,
+
+        location: {
+          address: form.address.trim(),
+          city: form.city.trim(),
+          state: form.state.trim(),
+          pincode: form.pincode.trim(),
+        },
+
+        images: uploadedImageUrls,
+
+        coverImage: uploadedImageUrls[0],
+
+        amenities: {
+          parking: Boolean(form.parking),
+          lift: Boolean(form.lift),
+          security: Boolean(form.security),
+          balcony: Boolean(form.balcony),
+          powerBackup: Boolean(form.powerBackup),
+          waterSupply: Boolean(form.waterSupply),
+        },
+
+        description: form.description.trim(),
       };
 
-      console.log("PROPERTY DATA:", payload);
+      console.log("=================================");
+      console.log("PROPERTY PAYLOAD:");
+      console.log(payload);
+      console.log("=================================");
 
-      await new Promise((resolve) =>
-        setTimeout(resolve, 1200)
+      // =========================
+      // 3. PUBLISH PROPERTY
+      // =========================
+
+      const response = await fetch(
+        "/backend/api/admin/properties",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          credentials: "include",
+
+          body: JSON.stringify(payload),
+        }
       );
 
-      alert("Property submitted successfully!");
+      // IMPORTANT:
+      // Backend ka actual response read karo
+
+      const data = await response.json();
+
+      console.log("=================================");
+      console.log("PROPERTY API STATUS:", response.status);
+      console.log("PROPERTY API RESPONSE:", data);
+      console.log("=================================");
+
+      if (!response.ok) {
+        throw new Error(
+          data?.message ||
+          data?.error ||
+          "Property publish failed"
+        );
+      }
+
+      console.log("PROPERTY CREATED:", data);
+
+      alert("Property published successfully!");
+
+      // Optional: form reset
+      setForm({
+        listingType: "sale",
+        propertyType: "Apartment",
+        title: "",
+        price: "",
+        bedrooms: "",
+        bathrooms: "",
+        area: "",
+        furnishing: "Unfurnished",
+        address: "",
+        city: "",
+        state: "",
+        pincode: "",
+        description: "",
+        parking: false,
+        lift: false,
+        security: false,
+        balcony: false,
+        powerBackup: false,
+        waterSupply: false,
+      });
+
+      setImages([]);
+      setPreviews([]);
+
     } catch (error) {
-      console.error(error);
-      alert("Something went wrong");
+      console.error("Publish property error:", error);
+
+      alert(
+        error?.message ||
+        "Something went wrong while publishing property"
+      );
     } finally {
       setSubmitting(false);
     }
   };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <main className="min-h-screen bg-[#f7faff] text-slate-900">
@@ -248,11 +432,10 @@ export default function ListPropertyPage() {
                           item.value
                         )
                       }
-                      className={`rounded-xl border p-4 text-left transition ${
-                        form.listingType === item.value
+                      className={`rounded-xl border p-4 text-left transition ${form.listingType === item.value
                           ? "border-blue-600 bg-blue-50 ring-2 ring-blue-100"
                           : "border-slate-200 hover:border-blue-300"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center justify-between">
 
@@ -732,19 +915,17 @@ export default function ListPropertyPage() {
                               !active
                             )
                           }
-                          className={`flex items-center gap-3 rounded-xl border p-4 text-left transition ${
-                            active
+                          className={`flex items-center gap-3 rounded-xl border p-4 text-left transition ${active
                               ? "border-blue-500 bg-blue-50"
                               : "border-slate-200 hover:border-blue-200"
-                          }`}
+                            }`}
                         >
 
                           <div
-                            className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                              active
+                            className={`flex h-9 w-9 items-center justify-center rounded-lg ${active
                                 ? "bg-blue-600 text-white"
                                 : "bg-slate-100 text-slate-500"
-                            }`}
+                              }`}
                           >
                             <Icon size={17} />
                           </div>

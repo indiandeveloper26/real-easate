@@ -304,6 +304,7 @@ import {
   User,
   LogOut,
 } from "lucide-react";
+import Swal from "sweetalert2";
 
 
 
@@ -364,8 +365,8 @@ export default function Sidebar() {
       icon: Building2,
     },
     {
-      name: "Projects",
-      href: "/admin/projects",
+      name: "Properties_Lits",
+      href: "/admin/Properties_Lits",
       icon: Briefcase,
     },
     {
@@ -375,19 +376,52 @@ export default function Sidebar() {
     },
   ];
 
-  // Logout
+  // // Logout
+  // const handleLogout = async () => {
+  //   try {
+  //     // Agar tumhare backend me user logout API hai
+  //     await fetch("/backend/api/admin/logout", {
+  //       method: "POST",
+  //       credentials: "include",
+  //     });
+  //   } catch (error) {
+  //     console.error("Logout error:", error);
+  //   } finally {
+  //     clearUser();
+  //     setIsSidebarOpen(false);
+  //     router.push("/");
+  //     router.refresh();
+  //   }
+  // };
+
+
+
   const handleLogout = async () => {
+    const result = await Swal.fire({
+      title: "Logout?",
+      text: "Are you sure you want to logout?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Logout",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+    });
+
+    // Cancel kiya
+    if (!result.isConfirmed) return;
+
     try {
-      // Agar tumhare backend me user logout API hai
-      await fetch("/api/auth/logout", {
+      await fetch("/backend/api/admin/logout", {
         method: "POST",
         credentials: "include",
       });
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
-      clearUser();
+      clearAdmin();
       setIsSidebarOpen(false);
+
+      console.log(' go home page okk')
       router.push("/");
       router.refresh();
     }

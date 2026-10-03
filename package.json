@@ -22,6 +22,7 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-redux": "^9.3.0",
+    "sweetalert2": "^11.26.25",
     "zustand": "^5.0.15"
   },
   "devDependencies": {

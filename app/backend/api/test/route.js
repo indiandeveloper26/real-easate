@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "../../../lib/mongodb";
 import AdminUser from "../../models/AdminUser";
+import Property from "../../models/Property";
 
 
 export async function GET() {
   try {
     await connectDB();
 
-    let data = await AdminUser.deleteMany()
+    let data = await Property.find()
 
     return NextResponse.json({
       success: true,

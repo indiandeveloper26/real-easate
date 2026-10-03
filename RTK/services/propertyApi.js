@@ -3,11 +3,41 @@ import { api } from "./api";
 export const propertyApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getProperties: builder.query({
-      query: (params = {}) => ({
-        url: "/properties",
+      query: (page = 1) => ({
+        url: "/admin/properties",
         method: "GET",
-        params,
+        params: {
+          page,
+          limit: 100,
+        },
       }),
+
+      // 🔥 VERY IMPORTANT
+      // All pages use ONE cache entry
+      serializeQueryArgs: ({ endpointName }) => endpointName,
+
+      // 🔥 Page 2/3/4 ko existing cache mein add karo
+      merge: (currentCache, newData, { arg }) => {
+        // Page 1 = fresh cache
+        if (arg === 1) {
+          return newData;
+        }
+
+        // Page 2+
+        currentCache.properties.push(
+          ...(newData.properties || [])
+        );
+
+        currentCache.pagination = newData.pagination;
+      },
+
+      // 🔥 Page change hone par API call
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg !== previousArg;
+      },
+
+      // 🔥 Cache ko 5 minute tak rakho
+      keepUnusedDataFor: 300,
 
       providesTags: ["Properties"],
     }),
@@ -40,12 +70,8 @@ export const propertyApi = api.injectEndpoints({
         body,
       }),
 
-      invalidatesTags: (result, error, { id }) => [
+      invalidatesTags: [
         "Properties",
-        {
-          type: "Property",
-          id,
-        },
       ],
     }),
 
