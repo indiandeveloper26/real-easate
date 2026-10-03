@@ -3,6 +3,8 @@ import "./globals.css";
 
 import Footer from "./components/Footer";
 import Sidebar from "./components/Sidebar";
+import ReduxProvider from "../RTK/store/Provider";
+
 
 
 const geistSans = Geist({
@@ -28,16 +30,16 @@ export default function RootLayout({ children }) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-slate-50 text-slate-800">
+        <ReduxProvider>
+          <Sidebar />
 
+          {/* Page Content */}
+          <main className="flex-1">
+            {children}
+          </main>
 
-        <Sidebar />
-        {/* Page Content */}
-        <main className="flex-1">
-          {children}
-        </main>
-
-        <Footer />
-
+          <Footer />
+        </ReduxProvider>
       </body>
     </html>
   );
