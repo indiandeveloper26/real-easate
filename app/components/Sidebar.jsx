@@ -886,8 +886,8 @@ export default function Sidebar() {
       icon: Briefcase,
     },
     {
-      name: "About Us",
-      href: "/about",
+      name: "Ask_with_AI",
+      href: "/chat-bot",
       icon: Info,
     },
   ];

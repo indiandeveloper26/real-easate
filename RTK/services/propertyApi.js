@@ -60,6 +60,30 @@ export const propertyApi = api.injectEndpoints({
       keepUnusedDataFor: 300,
     }),
 
+
+
+    // =====================================
+    // GET RECENT 10 PROPERTIES - HOMEPAGE
+    // =====================================
+    getRecentProperties: builder.query({
+      query: () => ({
+        url: "/properties/recent",
+        method: "GET",
+      }),
+
+      // Cache data for 5 minutes after unused
+      keepUnusedDataFor: 300,
+
+      // Refetch when the user returns to the page
+      refetchOnMountOrArgChange: 60,
+
+      // Refetch when a mutation invalidates this tag
+      providesTags: ["Properties"],
+    }),
+
+
+
+
     createProperty: builder.mutation({
       query: (body) => ({
         url: "/properties",
@@ -97,6 +121,7 @@ export const propertyApi = api.injectEndpoints({
 
 export const {
   useGetPropertiesQuery,
+  useGetRecentPropertiesQuery,
   useGetPropertyQuery,
   useCreatePropertyMutation,
   useUpdatePropertyMutation,

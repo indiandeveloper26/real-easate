@@ -22,6 +22,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import Link from "next/link";
+import { useGetRecentPropertiesQuery } from "../RTK/services/propertyApi";
+import Image from "next/image";
 
 // Dummy Data
 const featuredProperties = [
@@ -113,129 +115,144 @@ const popularProjects = [
 export default function page() {
   const [activeTab, setActiveTab] = useState("Buy");
 
+
+
+
+
+
+
+
+
+
+
+  const { data, isLoading, isFetching, isError, refetch, } = useGetRecentPropertiesQuery();
+
+
+  const properties = data?.properties || [];
+
+
+
+  console.log('datata', properties)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
       {/* 1. Header / Navbar */}
-   
+
 
       {/* 2. Hero Section */}
-      <section className="relative min-h-[580px] flex items-center bg-slate-900">
-        <img
-          src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1920&q=80"
-          alt="Luxury Building"
-          className="absolute inset-0 w-full h-full object-cover object-center opacity-40 mix-blend-overlay"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
+
+      <section className="relative min-h-[520px] sm:min-h-[600px] lg:min-h-[660px] flex items-center bg-slate-950 overflow-hidden">
+        {/* Background Image */}
+        <Image
+          src="/img.png"
+          alt="Luxury Modern Villa Architecture"
+          fill
+          priority
+          sizes="100vw"
+          className="absolute inset-0 h-full w-full object-cover object-center scale-100 sm:scale-105 transition-transform duration-1000 ease-out"
+        />
+
+        {/* Responsive Contrast Overlays */}
+        {/* Mobile: Top-to-bottom dark gradient taaki mobile par text 100% sharp aur readable rahe */}
+        <div className="absolute inset-0 bg-slate-950/75 sm:hidden" />
+
+        {/* Desktop/Tablet: Left-to-right gradient jisse text safe rahe aur luxury house bhi clear dikhe */}
+        <div className="hidden sm:block absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/85 to-slate-950/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+
+        {/* Main Content Area */}
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-28 w-full flex flex-col justify-between">
           <div className="max-w-2xl text-white">
-            <span className="text-xs tracking-widest uppercase font-semibold text-blue-400">
+            {/* Badge */}
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] sm:text-xs tracking-wider uppercase font-bold text-blue-400 bg-blue-500/10 border border-blue-400/20 backdrop-blur-sm">
               Find Your Perfect Home
             </span>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mt-2 mb-4 leading-tight">
-              Find Your <br />
-              <span className="text-white">Dream Property</span>
+
+            {/* Heading */}
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mt-3 mb-3 sm:mb-4 leading-[1.18] sm:leading-[1.15]">
+              Find Your <br className="hidden sm:inline" />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-blue-200">
+                Dream Property
+              </span>
             </h1>
-            <p className="text-slate-300 text-base sm:text-lg mb-8 leading-relaxed font-light">
+
+            {/* Description */}
+            <p className="text-slate-300 text-sm sm:text-base lg:text-lg mb-6 sm:mb-8 leading-relaxed font-normal max-w-xl">
               Buy, Rent or Invest in the best properties across Lucknow. We make your property journey simple, secure and stress-free.
             </p>
-          </div>
 
-          <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-2xl max-w-4xl border border-slate-100/50">
-            {/* Filter Tabs */}
-            <div className="flex gap-2 border-b border-slate-100 pb-4 mb-4">
-              {["Buy", "Rent", "Commercial"].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-5 py-2 rounded-lg text-sm font-medium transition ${
-                    activeTab === tab
-                      ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
-                      : "text-slate-600 hover:bg-slate-100"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-
-            {/* Inputs Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-              <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <MapPin className="w-5 h-5 text-blue-600 shrink-0" />
-                <div className="w-full">
-                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Location</p>
-                  <select className="bg-transparent text-sm font-semibold text-slate-700 w-full outline-none">
-                    <option>Select Location</option>
-                    <option>Gomti Nagar</option>
-                    <option>Hazratganj</option>
-                    <option>Indira Nagar</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <HomeIcon className="w-5 h-5 text-blue-600 shrink-0" />
-                <div className="w-full">
-                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Property Type</p>
-                  <select className="bg-transparent text-sm font-semibold text-slate-700 w-full outline-none">
-                    <option>All Types</option>
-                    <option>Apartment / Flat</option>
-                    <option>Villa</option>
-                    <option>Plot / Land</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <IndianRupee className="w-5 h-5 text-blue-600 shrink-0" />
-                <div className="w-full">
-                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Budget</p>
-                  <select className="bg-transparent text-sm font-semibold text-slate-700 w-full outline-none">
-                    <option>Select Budget</option>
-                    <option>₹ 30L - 60L</option>
-                    <option>₹ 60L - 1 Cr</option>
-                    <option>₹ 1 Cr+</option>
-                  </select>
-                </div>
-              </div>
-
-              <button className="w-full h-full min-h-[52px] bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30 transition">
-                <Search className="w-4 h-4" />
-                <span>Search</span>
-              </button>
+            {/* Mobile Trusted Badge (Phone par content ke sath clean compact strip dikhegi) */}
+            <div className="flex sm:hidden items-center gap-2.5 bg-white/10 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/10 w-fit">
+              <CheckCircle2 className="w-4 h-4 text-blue-400 shrink-0" />
+              <span className="text-xs font-medium text-slate-200">
+                <strong className="text-white font-bold">10,000+</strong> Happy Families Trust Us
+              </span>
             </div>
           </div>
 
-          {/* Trusted Badge */}
-          <div className="absolute right-8 bottom-8 hidden lg:flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-xl">
-            <div className="p-2 bg-blue-100 rounded-xl text-blue-600">
-              <CheckCircle2 className="w-6 h-6" />
+          {/* Desktop/Tablet Trusted Floating Badge */}
+          <div className="absolute right-6 lg:right-8 bottom-8 hidden sm:flex items-center gap-3.5 bg-white/95 backdrop-blur-md px-5 py-3 rounded-2xl shadow-2xl border border-white/20">
+            <div className="p-2.5 bg-blue-50 rounded-xl text-blue-600 shadow-inner shrink-0">
+              <CheckCircle2 className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-sm font-bold text-slate-800">Trusted by 10,000+</p>
-              <p className="text-xs text-slate-500">Happy Families</p>
+              <p className="text-sm font-extrabold text-slate-900 leading-none">
+                Trusted by 10,000+
+              </p>
+              <p className="text-xs font-medium text-slate-500 mt-1 leading-none">
+                Happy Families
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       {/* 3. Categories / Quick Services */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20">
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 grid grid-cols-2 md:grid-cols-5 gap-4">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 sm:-mt-8 relative z-20">
+        <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-3 sm:p-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-4">
           {categories.map((item, i) => (
             <div
               key={i}
-              className="flex items-center gap-3.5 p-3 rounded-xl hover:bg-slate-50 transition cursor-pointer group"
+              className="flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-2 sm:gap-3.5 p-2.5 sm:p-3 rounded-xl hover:bg-slate-50 transition cursor-pointer group"
             >
-              <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition">
-                <item.icon className="w-5 h-5" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition">
+                <item.icon className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
-              <div>
-                <h4 className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition">
+              <div className="min-w-0 w-full">
+                <h4 className="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-blue-600 transition truncate">
                   {item.title}
                 </h4>
-                <p className="text-xs text-slate-400 mt-0.5">{item.subtitle}</p>
+                <p className="text-[10px] sm:text-xs text-slate-400 mt-0.5 truncate">
+                  {item.subtitle}
+                </p>
               </div>
             </div>
           ))}
@@ -330,25 +347,39 @@ export default function page() {
               </p>
 
               <div className="mt-6 space-y-3">
-                <button className="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-xs rounded-xl flex items-center justify-center gap-2 shadow-sm transition">
+                {/* WhatsApp Button */}
+                <button
+                  onClick={() => {
+                    const phone = "919876543210"; // Apna WhatsApp number daalo
+                    const message = "Hello, mujhe is property ke baare mein details chahiye.";
+
+                    window.open(
+                      `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
+                      "_blank",
+                      "noopener,noreferrer"
+                    );
+                  }}
+                  className="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-xs rounded-xl flex items-center justify-center gap-2 shadow-sm transition"
+                >
                   <MessageCircle className="w-4 h-4" />
                   <span>Chat on WhatsApp</span>
                 </button>
+
+                {/* OR */}
                 <div className="relative text-center my-2">
-                  <span className="text-[11px] text-slate-400 uppercase font-semibold bg-white px-2">Or</span>
-                </div>
-                <button className="w-full py-2.5 border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold text-xs rounded-xl flex items-center justify-center gap-2 transition">
-                  <CalendarCheck className="w-4 h-4" />
-                  <span>
-
-                    <Link href={"/request-property"}>
-                        Book Site Visit
-                    </Link>
-                    
-                
-
+                  <span className="text-[11px] text-slate-400 uppercase font-semibold bg-white px-2">
+                    Or
                   </span>
-                </button>
+                </div>
+
+                {/* Book Site Visit */}
+                <Link
+                  href="/request-property"
+                  className="w-full py-2.5 border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold text-xs rounded-xl flex items-center justify-center gap-2 transition"
+                >
+                  <CalendarCheck className="w-4 h-4" />
+                  <span>Book Site Visit</span>
+                </Link>
               </div>
             </div>
 
@@ -371,28 +402,75 @@ export default function page() {
       </section>
 
       {/* 5. Sell / Rent CTA Banner */}
+
+
+      {/* Property Listing CTA Banner */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-blue-900 to-indigo-950 px-8 py-10 sm:px-12 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
-          <div className="relative z-10 max-w-xl text-white">
-            <span className="text-[11px] uppercase tracking-widest font-semibold text-blue-300">
-              Want to sell or rent your property?
-            </span>
-            <h3 className="text-2xl sm:text-3xl font-extrabold mt-1 mb-2">
-              Get the Best Value for Your Property
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-300 font-light">
-              Reach thousands of genuine buyers and renters. <Link href={"/request-property"}>
-              
-              List your property</Link>
-              
-               with us today!
-            </p>
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-950 via-blue-950 to-indigo-950 px-6 py-10 sm:px-12 sm:py-12 shadow-xl">
+
+          {/* Background Decoration */}
+          <div className="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-blue-500/20 blur-3xl" />
+          <div className="absolute -bottom-20 left-1/3 h-48 w-48 rounded-full bg-indigo-500/20 blur-3xl" />
+
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+
+            {/* Text Content */}
+            <div className="max-w-2xl text-center md:text-left text-white">
+              <span className="inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-400/10 px-3 py-1.5 text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-blue-300">
+                <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                Find Your Perfect Property
+              </span>
+
+              <h3 className="mt-4 text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-tight">
+                Discover Properties That
+                <span className="block text-blue-400">
+                  Feel Like Home
+                </span>
+              </h3>
+
+              <p className="mt-4 max-w-xl text-sm sm:text-base leading-7 text-slate-300">
+                Explore available homes, apartments, plots and commercial
+                properties. Compare prices, view photos and find a property
+                that matches your needs.
+              </p>
+
+              <div className="mt-5 flex flex-wrap justify-center md:justify-start gap-x-5 gap-y-2 text-xs sm:text-sm text-slate-300">
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                  Multiple Property Types
+                </span>
+
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                  Buy or Rent
+                </span>
+              </div>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="relative z-10 flex w-full flex-col gap-3 sm:w-auto sm:min-w-52">
+              <Link
+                href="/properties"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-500 px-7 py-3.5 text-sm font-bold text-white shadow-lg transition hover:bg-blue-400"
+              >
+                View Properties
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+
+              <Link
+                href="/request-property"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white transition hover:bg-white/20"
+              >
+                Find a Property
+                <Search className="h-4 w-4" />
+              </Link>
+            </div>
+
           </div>
-          <button className="relative z-10 bg-white hover:bg-slate-100 text-blue-900 font-bold px-6 py-3 rounded-xl text-xs sm:text-sm flex items-center gap-2 shadow-lg transition">
-            List Your Property <ArrowRight className="w-4 h-4" />
-          </button>
         </div>
       </section>
+
+
 
       {/* 6. Popular Projects */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
@@ -404,13 +482,15 @@ export default function page() {
             <p className="text-sm text-slate-500 mt-1">
               Explore our handpicked projects in the most sought-after locations.
             </p>
+
+
           </div>
-          <a
-            href="#"
-            className="text-sm font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1.5 transition"
+          <Link
+            href={"/properties"}
+
           >
             View All Projects <ArrowRight className="w-4 h-4" />
-          </a>
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
