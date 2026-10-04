@@ -141,7 +141,6 @@ export default function page() {
             </p>
           </div>
 
-          {/* Search Card */}
           <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-2xl max-w-4xl border border-slate-100/50">
             {/* Filter Tabs */}
             <div className="flex gap-2 border-b border-slate-100 pb-4 mb-4">

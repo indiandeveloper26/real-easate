@@ -505,7 +505,7 @@ export async function GET(request) {
             1
         );
 
-        const limit = 100;
+        const limit = 10;
         const skip = (page - 1) * limit;
 
         const [properties, total] = await Promise.all([

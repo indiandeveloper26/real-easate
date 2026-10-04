@@ -4,6 +4,7 @@ import "./globals.css";
 import Footer from "./components/Footer";
 import Sidebar from "./components/Sidebar";
 import ReduxProvider from "../RTK/store/Provider";
+import { Toaster } from "react-hot-toast";
 
 
 
@@ -37,6 +38,19 @@ export default function RootLayout({ children }) {
           <main className="flex-1">
             {children}
           </main>
+
+          <Toaster
+            position="top-right"
+            reverseOrder={false}
+            toastOptions={{
+              duration: 3000,
+              style: {
+                background: "#111827",
+                color: "#fff",
+                border: "1px solid #374151",
+              },
+            }}
+          />
 
           <Footer />
         </ReduxProvider>

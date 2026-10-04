@@ -8,7 +8,7 @@ export const propertyApi = api.injectEndpoints({
         method: "GET",
         params: {
           page,
-          limit: 100,
+          limit: 10,
         },
       }),
 
@@ -43,14 +43,21 @@ export const propertyApi = api.injectEndpoints({
     }),
 
     getProperty: builder.query({
-      query: (id) => `/properties/${id}`,
+      query: (id) => ({
+        url: `/admin/properties/${id}`,
+        method: "GET",
+      }),
 
+      // API response: { success, message, property }
+      transformResponse: (response) => response.property,
+
+      // Cache each property by its ID
       providesTags: (result, error, id) => [
-        {
-          type: "Property",
-          id,
-        },
+        { type: "Property", id },
       ],
+
+      // Keep unused property data cached for 5 minutes
+      keepUnusedDataFor: 300,
     }),
 
     createProperty: builder.mutation({
@@ -77,7 +84,7 @@ export const propertyApi = api.injectEndpoints({
 
     deleteProperty: builder.mutation({
       query: (id) => ({
-        url: `/properties/${id}`,
+        url: `/admin/properties/${id}`,
         method: "DELETE",
       }),
 
