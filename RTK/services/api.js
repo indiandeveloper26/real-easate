@@ -11,6 +11,7 @@ export const api = createApi({
     "Properties",
     "Property",
     "Enquiries",
+    "AdminInquiries",
     "User",
   ],
 

@@ -20,6 +20,7 @@ import {
   ShieldCheck,
   Headphones,
   CheckCircle2,
+  MessageSquareText,
 } from "lucide-react";
 import Link from "next/link";
 import { useGetRecentPropertiesQuery } from "../RTK/services/propertyApi";
@@ -270,12 +271,12 @@ export default function page() {
               Handpicked properties for you. Explore the best deals in top locations.
             </p>
           </div>
-          <a
-            href="#"
+          <Link
+            href={"/properties"}
             className="text-sm font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1.5 transition"
           >
             View All Properties <ArrowRight className="w-4 h-4" />
-          </a>
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -368,7 +369,7 @@ export default function page() {
                 {/* OR */}
                 <div className="relative text-center my-2">
                   <span className="text-[11px] text-slate-400 uppercase font-semibold bg-white px-2">
-                    Or
+
                   </span>
                 </div>
 
@@ -377,8 +378,8 @@ export default function page() {
                   href="/request-property"
                   className="w-full py-2.5 border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold text-xs rounded-xl flex items-center justify-center gap-2 transition"
                 >
-                  <CalendarCheck className="w-4 h-4" />
-                  <span>Book Site Visit</span>
+                  <MessageSquareText className="w-4 h-4" />
+                  <span>Send Your Inquiries</span>
                 </Link>
               </div>
             </div>

@@ -273,7 +273,7 @@ Dashboard Overview </h1> </div>
 
           <div className="mt-5 flex flex-wrap gap-3">
             <Link
-              href="/admin/properties"
+              href="/properties"
               className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-bold text-blue-700 transition hover:bg-blue-50"
             >
               <Plus size={17} />
