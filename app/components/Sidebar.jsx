@@ -465,7 +465,7 @@ export default function Sidebar() {
                 Register
               </Link>
                <span className="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">
-                v-1.0.5
+                v-1.0.6
               </span>
             </div>
           )}

@@ -110,45 +110,39 @@ export default function ListPropertyPage() {
 
 
 
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!form.title.trim()) {
-      alert("Please enter property title");
+      toast.error("Please enter the property title.");
       return;
     }
 
     if (!form.price.trim()) {
-      alert("Please enter property price");
+      toast.error("Please enter the property price.");
       return;
     }
 
     if (!form.city.trim()) {
-      alert("Please enter city");
+      toast.error("Please enter the city.");
       return;
     }
 
     if (!images.length) {
-      alert("Please upload at least one property image");
+      toast.error("Please upload at least one property image.");
       return;
     }
 
     setSubmitting(true);
 
     try {
-      // =========================
-      // 1. UPLOAD IMAGES
-      // =========================
-
+      // 1. Upload images to Cloudinary
       const uploadedImageUrls = [];
+
 
       for (const image of images) {
         const imageData = new FormData();
-
         imageData.append("file", image);
-
         imageData.append(
           "upload_preset",
           process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
@@ -159,8 +153,6 @@ export default function ListPropertyPage() {
           `${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}` +
           `/image/upload`;
 
-        console.log("Cloudinary URL:", cloudinaryUrl);
-
         const uploadResponse = await fetch(cloudinaryUrl, {
           method: "POST",
           body: imageData,
@@ -168,37 +160,31 @@ export default function ListPropertyPage() {
 
         const uploadData = await uploadResponse.json();
 
-        console.log("CLOUDINARY RESPONSE:", uploadData);
-
         if (!uploadResponse.ok) {
           throw new Error(
-            uploadData?.error?.message || "Image upload failed"
+            uploadData?.error?.message ||
+            "Image upload failed. Please try again."
           );
         }
 
         if (!uploadData.secure_url) {
-          throw new Error("Cloudinary did not return image URL");
+          throw new Error(
+            "Image upload failed because no image URL was returned."
+          );
         }
 
         uploadedImageUrls.push(uploadData.secure_url);
       }
 
-      // =========================
-      // 2. PROPERTY PAYLOAD
-      // =========================
-
+      // 2. Prepare property payload
       const payload = {
         listingType: form.listingType,
         propertyType: form.propertyType,
-
         title: form.title.trim(),
-
         price: Number(form.price.replace(/,/g, "")),
-
         bedrooms: Number(form.bedrooms || 0),
         bathrooms: Number(form.bathrooms || 0),
         area: Number(form.area || 0),
-
         furnishing: form.furnishing,
 
         location: {
@@ -209,7 +195,6 @@ export default function ListPropertyPage() {
         },
 
         images: uploadedImageUrls,
-
         coverImage: uploadedImageUrls[0],
 
         amenities: {
@@ -224,89 +209,58 @@ export default function ListPropertyPage() {
         description: form.description.trim(),
       };
 
-      console.log("=================================");
-      console.log("PROPERTY PAYLOAD:");
-      console.log(payload);
-      console.log("=================================");
+      // 3. Save property
+      const response = await fetch("/backend/api/admin/properties", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      });
 
-      // =========================
-      // 3. PUBLISH PROPERTY
-      // =========================
+      // Safely read the API response
+      const responseText = await response.text();
+      let data = {};
 
-      const response = await fetch(
-        "/backend/api/admin/properties",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          credentials: "include",
-
-          body: JSON.stringify(payload),
-        }
-      );
-
-      // IMPORTANT:
-      // Backend ka actual response read karo
-
-      const data = await response.json();
-
-      console.log("=================================");
-      console.log("PROPERTY API STATUS:", response.status);
-      console.log("PROPERTY API RESPONSE:", data);
-      console.log("=================================");
+      try {
+        data = responseText ? JSON.parse(responseText) : {};
+      } catch {
+        throw new Error(
+          `Server returned an invalid response (HTTP ${response.status}). Please try again.`
+        );
+      }
 
       if (!response.ok) {
         throw new Error(
           data?.message ||
           data?.error ||
-          "Property publish failed"
+          `Failed to save property (HTTP ${response.status}).`
         );
       }
 
-      console.log("PROPERTY CREATED:", data);
+      if (data.success === false) {
+        throw new Error(data.message || "Property could not be saved.");
+      }
 
+      toast.success(data.message || "Property published successfully!");
+      ```
 
-      toast.success("Property published successfully!")
+} catch (error) {
+console.error("Publish property error:", error);
 
+```
+      toast.error(
+        error?.message ||
+        "Unable to save the property. Please try again."
+      );
 
-      // Optional: form reset
-      // setForm({
-      //   listingType: "sale",
-      //   propertyType: "Apartment",
-      //   title: "",
-      //   price: "",
-      //   bedrooms: "",
-      //   bathrooms: "",
-      //   area: "",
-      //   furnishing: "Unfurnished",
-      //   address: "",
-      //   city: "",
-      //   state: "",
-      //   pincode: "",
-      //   description: "",
-      //   parking: false,
-      //   lift: false,
-      //   security: false,
-      //   balcony: false,
-      //   powerBackup: false,
-      //   waterSupply: false,
-      // });
-
-      // setImages([]);
-      // setPreviews([]);
-
-    } catch (error) {
-      console.error("Publish property error:", error);
-
-      toast.error("Something went wrong while publishing property")
 
     } finally {
       setSubmitting(false);
     }
   };
+
 
 
 

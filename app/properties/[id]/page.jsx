@@ -304,11 +304,10 @@ export default function PropertyDetailPage() {
                     <button
                       key={`${img}-${index}`}
                       onClick={() => setActiveImageIndex(index)}
-                      className={`relative h-20 w-28 shrink-0 overflow-hidden rounded-2xl border-2 transition-all duration-200 ${
-                        activeImageIndex === index
+                      className={`relative h-20 w-28 shrink-0 overflow-hidden rounded-2xl border-2 transition-all duration-200 ${activeImageIndex === index
                           ? "border-blue-900 ring-2 ring-blue-900/20 scale-100 opacity-100"
                           : "border-transparent opacity-60 hover:opacity-100"
-                      }`}
+                        }`}
                     >
                       <img
                         src={img}
@@ -420,6 +419,47 @@ export default function PropertyDetailPage() {
               </div>
             </section>
 
+
+            {/* Property Amenities */}
+            <section className="mt-8 rounded-2xl border border-gray-200 p-6">
+              <h2 className="mb-5 text-xl font-bold text-gray-900">
+                Amenities & Facilities
+              </h2>
+
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                {[
+                  { key: "parking", label: "Parking" },
+                  { key: "lift", label: "Lift" },
+                  { key: "security", label: "Security" },
+                  { key: "balcony", label: "Balcony" },
+                  { key: "powerBackup", label: "Power Backup" },
+                  { key: "waterSupply", label: "Water Supply" },
+                ].map((item) => {
+                  const available = property?.amenities?.[item.key];
+
+                  return (
+                    <div
+                      key={item.key}
+                      className="flex items-center gap-3 rounded-xl bg-gray-50 p-4"
+                    >
+                      <span
+                        className={`flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold ${available
+                            ? "bg-green-100 text-green-700"
+                            : "bg-gray-200 text-gray-500"
+                          }`}
+                      >
+                        {available ? "✓" : "—"}
+                      </span>
+
+                      <span className="text-sm font-medium text-gray-700">
+                        {item.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+
             {/* Description */}
             <section className="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-sm sm:p-8">
               <h2 className="text-xl font-black tracking-tight text-slate-900">
@@ -428,9 +468,8 @@ export default function PropertyDetailPage() {
 
               <div className="relative mt-4">
                 <p
-                  className={`text-sm leading-relaxed text-slate-600 ${
-                    !isDescExpanded ? "line-clamp-4" : ""
-                  }`}
+                  className={`text-sm leading-relaxed text-slate-600 ${!isDescExpanded ? "line-clamp-4" : ""
+                    }`}
                 >
                   {property?.description || "No specific description added for this listing. Please reach out directly to the owner/agent for more context."}
                 </p>

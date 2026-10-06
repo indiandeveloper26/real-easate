@@ -8,6 +8,7 @@ import { cookies } from "next/headers";
 
 
 import { verifyAdminToken } from "../../../../../lib/auth";
+import AdminUser from "../../../../models/AdminUser";
 
 
 
@@ -207,6 +208,263 @@ export async function DELETE(request, { params }) {
       {
         success: false,
         message: "Failed to delete property",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+// ==========================================
+// UPDATE PROPERTY
+// ==========================================
+export async function PUT(request, { params }) {
+  try {
+    await connectDB();
+
+    // 1. Get property ID
+    const { id } = await params;
+
+    if (!id || !/^[a-f\d]{24}$/i.test(id)) {
+      return NextResponse.json(
+        { success: false, message: "Invalid property ID" },
+        { status: 400 }
+      );
+    }
+
+    // 2. Get admin token
+    const token = request.cookies.get("admin_token")?.value;
+
+    if (!token) {
+      return NextResponse.json(
+        { success: false, message: "Admin authentication required" },
+        { status: 401 }
+      );
+    }
+
+    // 3. Verify token and admin role
+    const decoded = verifyAdminToken(token);
+
+    if (!decoded) {
+      return NextResponse.json(
+        { success: false, message: "Invalid session or admin access denied" },
+        { status: 401 }
+      );
+    }
+
+    // 4. Resolve admin ID
+    const adminId =
+      decoded.id ||
+      decoded._id ||
+      decoded.adminId ||
+      decoded.userId;
+
+    if (!adminId) {
+      return NextResponse.json(
+        { success: false, message: "Admin ID not found in token" },
+        { status: 401 }
+      );
+    }
+
+    // 5. Verify admin exists and is active
+    const admin = await AdminUser.findById(adminId);
+
+    if (!admin) {
+      return NextResponse.json(
+        { success: false, message: "Admin user not found" },
+        { status: 404 }
+      );
+    }
+
+    if (!admin.isActive || admin.role !== "admin") {
+      return NextResponse.json(
+        { success: false, message: "Admin account is inactive or unauthorized" },
+        { status: 403 }
+      );
+    }
+
+    // 6. Find property
+    const property = await Property.findById(id);
+
+    if (!property) {
+      return NextResponse.json(
+        { success: false, message: "Property not found" },
+        { status: 404 }
+      );
+    }
+
+    // 7. Read request body
+    const body = await request.json();
+
+    const {
+      listingType,
+      propertyType,
+      title,
+      price,
+      bedrooms,
+      bathrooms,
+      area,
+      furnishing,
+      location,
+      images,
+      coverImage,
+      amenities,
+      description,
+    } = body;
+
+    // 8. Validate required fields
+    if (!["sale", "rent"].includes(listingType)) {
+      return NextResponse.json(
+        { success: false, message: "Invalid listing type" },
+        { status: 400 }
+      );
+    }
+
+    if (
+      typeof propertyType !== "string" ||
+      !propertyType.trim()
+    ) {
+      return NextResponse.json(
+        { success: false, message: "Property type is required" },
+        { status: 400 }
+      );
+    }
+
+    if (typeof title !== "string" || !title.trim()) {
+      return NextResponse.json(
+        { success: false, message: "Property title is required" },
+        { status: 400 }
+      );
+    }
+
+    const numericPrice = Number(price);
+    const numericArea = Number(area);
+
+    if (
+      price === "" ||
+      price === null ||
+      price === undefined ||
+      !Number.isFinite(numericPrice) ||
+      numericPrice <= 0
+    ) {
+      return NextResponse.json(
+        { success: false, message: "Invalid property price" },
+        { status: 400 }
+      );
+    }
+
+    if (
+      area === "" ||
+      area === null ||
+      area === undefined ||
+      !Number.isFinite(numericArea) ||
+      numericArea <= 0
+    ) {
+      return NextResponse.json(
+        { success: false, message: "Invalid property area" },
+        { status: 400 }
+      );
+    }
+
+    if (
+      !location ||
+      typeof location.address !== "string" ||
+      !location.address.trim() ||
+      typeof location.city !== "string" ||
+      !location.city.trim() ||
+      typeof location.state !== "string" ||
+      !location.state.trim() ||
+      !String(location.pincode || "").trim()
+    ) {
+      return NextResponse.json(
+        { success: false, message: "Complete property location is required" },
+        { status: 400 }
+      );
+    }
+
+    if (
+      !Array.isArray(images) ||
+      images.length === 0 ||
+      images.length > 10 ||
+      !images.every(
+        (image) =>
+          typeof image === "string" && image.trim().length > 0
+      )
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Provide between 1 and 10 valid property image URLs",
+        },
+        { status: 400 }
+      );
+    }
+
+    // 9. Update property fields
+    property.listingType = listingType;
+    property.propertyType = propertyType.trim();
+    property.title = title.trim();
+    property.price = numericPrice;
+    property.bedrooms = Number(bedrooms || 0);
+    property.bathrooms = Number(bathrooms || 0);
+    property.area = numericArea;
+    property.furnishing = furnishing || "Unfurnished";
+
+    property.location = {
+      address: location.address.trim(),
+      city: location.city.trim(),
+      state: location.state.trim(),
+      pincode: String(location.pincode).trim(),
+    };
+
+    property.images = images;
+    property.coverImage =
+      typeof coverImage === "string" && images.includes(coverImage)
+        ? coverImage
+        : images[0];
+
+    property.amenities = {
+      parking: Boolean(amenities?.parking),
+      lift: Boolean(amenities?.lift),
+      security: Boolean(amenities?.security),
+      balcony: Boolean(amenities?.balcony),
+      powerBackup: Boolean(amenities?.powerBackup),
+      waterSupply: Boolean(amenities?.waterSupply),
+    };
+
+    property.description =
+      typeof description === "string" ? description.trim() : "";
+
+    // Preserve owner and approval status
+    await property.save();
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Property updated successfully",
+        property,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("UPDATE PROPERTY ERROR:", error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Failed to update property",
+        error:
+          process.env.NODE_ENV === "development"
+            ? error.message
+            : undefined,
       },
       { status: 500 }
     );

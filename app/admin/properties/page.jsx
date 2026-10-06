@@ -82,6 +82,11 @@ export default function AdminPropertyListingsPage() {
     const properties = data?.properties || [];
     const pagination = data?.pagination;
 
+
+
+    console.log('data', properties)
+
+
     const filteredProperties = useMemo(() => {
         const query = search.trim().toLowerCase();
 
@@ -435,13 +440,12 @@ export default function AdminPropertyListingsPage() {
 
                                                 <td className="py-3.5 px-4">
                                                     <span
-                                                        className={`inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold capitalize ${
-                                                            status === "active"
+                                                        className={`inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold capitalize ${status === "active"
                                                                 ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
                                                                 : status === "pending"
-                                                                ? "bg-amber-50 text-amber-600 border border-amber-100"
-                                                                : "bg-slate-100 text-slate-500 border border-slate-200"
-                                                        }`}
+                                                                    ? "bg-amber-50 text-amber-600 border border-amber-100"
+                                                                    : "bg-slate-100 text-slate-500 border border-slate-200"
+                                                            }`}
                                                     >
                                                         {status}
                                                     </span>
@@ -463,7 +467,7 @@ export default function AdminPropertyListingsPage() {
                                                         </Link>
 
                                                         <Link
-                                                            href={`/admin/properties?id=${property._id}`}
+                                                            href={`/admin/properties/${property?._id}`}
                                                             aria-label="Edit property"
                                                             className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 transition"
                                                         >

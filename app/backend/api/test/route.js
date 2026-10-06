@@ -9,7 +9,7 @@ export async function GET() {
   try {
     await connectDB();
 
-    let data = await PropertyInquiry.find()
+    let data = await Property.find()
 
     return NextResponse.json({
       success: true,

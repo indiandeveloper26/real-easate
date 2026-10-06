@@ -433,7 +433,7 @@ export async function POST(request) {
             description:
                 description?.trim() || "",
 
-            status: "pending",
+            status: "approved",
 
             publishedAt: null,
         });
@@ -516,11 +516,11 @@ export async function GET(request) {
           coverImage
           images
           status
-          listingType
+          
           price
-          bedrooms
-          bathrooms
-          area
+          
+          
+          
           propertyType
           location.city
           location.state
@@ -566,3 +566,28 @@ export async function GET(request) {
         );
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ==========================================
+// UPDATE PROPERTY
+// PUT /backend/api/admin/properties/:id
+// ==========================================
+
