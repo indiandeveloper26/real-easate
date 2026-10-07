@@ -330,13 +330,7 @@ const handleSubmit = async (e) => {
                   First-time administrator?
                 </p>
 
-                <Link
-                  href="/admin/signup"
-                  className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700"
-                >
-                  Create Admin Account
-                  <ArrowRight size={15} />
-                </Link>
+            
               </div>
 
               <p className="mt-6 text-center text-xs text-slate-400">

@@ -1,33 +1,33 @@
+
 import { api } from "../../../services/api";
 
 export const propertyApi = api.injectEndpoints({
   endpoints: (builder) => ({
     // =====================================
-    // EXISTING PROPERTY ENDPOINTS
-    // =====================================
-
-    // Apne existing endpoints yahan waise hi rehne do.
-
-    // =====================================
     // ADMIN - GET ALL PROPERTY INQUIRIES
     // =====================================
     getAdminInquiries: builder.query({
-      query: ({ status = "All", search = "" } = {}) => ({
+      query: ({
+        status = "All",
+        search = "",
+        page = 1,
+      } = {}) => ({
         url: "/admin/inquiries",
         method: "GET",
         params: {
           status,
           search,
+          page,
         },
       }),
 
-      // API response:
-      // { success, stats, inquiries, count }
+      // Har page ka response alag cache hoga.
+      // page 1 = first 10 records
+      // page 2 = next 10 records
+      keepUnusedDataFor: 60,
 
-      keepUnusedDataFor: 300,
-
-      // Page par wapas aane par 60 sec baad fresh data
-      refetchOnMountOrArgChange: 60,
+      // Mount hone ya arguments change hone par refetch.
+      refetchOnMountOrArgChange: true,
 
       providesTags: ["AdminInquiries"],
     }),
@@ -39,3 +39,4 @@ export const propertyApi = api.injectEndpoints({
 export const {
   useGetAdminInquiriesQuery,
 } = propertyApi;
+
