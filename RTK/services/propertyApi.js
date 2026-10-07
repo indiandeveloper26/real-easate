@@ -84,6 +84,69 @@ export const propertyApi = api.injectEndpoints({
 
 
 
+
+
+    getFilteredProperties: builder.query({
+      query: ({
+        page = 1,
+        limit = 10,
+        listingType = "all",
+        propertyTypes = [],
+        city = "",
+        minPrice = "",
+        maxPrice = "",
+        bedrooms = "any",
+        sortBy = "newest",
+        search = "",
+      } = {}) => {
+        const params = new URLSearchParams();
+
+        params.set("page", String(page));
+        params.set("limit", String(limit));
+        params.set("sortBy", sortBy);
+
+        if (listingType !== "all") {
+          params.set("listingType", listingType);
+        }
+
+        if (propertyTypes.length > 0) {
+          params.set("propertyTypes", propertyTypes.join(","));
+        }
+
+        if (city.trim()) params.set("city", city.trim());
+        if (minPrice !== "") params.set("minPrice", String(minPrice));
+        if (maxPrice !== "") params.set("maxPrice", String(maxPrice));
+
+        if (bedrooms !== "any") {
+          params.set("bedrooms", String(bedrooms));
+        }
+
+        if (search.trim()) params.set("search", search.trim());
+
+        return {
+          url: `/NoramUsers/Filter_Properties/${params.toString()}`,
+          method: "GET",
+        };
+      },
+
+      // Cache data for 5 minutes after unused
+      keepUnusedDataFor: 300,
+
+      // Refetch when the user returns to the page
+      refetchOnMountOrArgChange: 60,
+
+      // Refetch when a mutation invalidates this tag
+      providesTags: ["Properties"],
+    }),
+
+
+
+
+
+
+
+
+
     createProperty: builder.mutation({
       query: (body) => ({
         url: "/properties",
@@ -126,4 +189,5 @@ export const {
   useCreatePropertyMutation,
   useUpdatePropertyMutation,
   useDeletePropertyMutation,
+  useGetFilteredPropertiesQuery,
 } = propertyApi;

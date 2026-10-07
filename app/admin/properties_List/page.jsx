@@ -244,12 +244,12 @@ export default function ListPropertyPage() {
       }
 
       toast.success(data.message || "Property published successfully!");
-      ```
+      
 
 } catch (error) {
 console.error("Publish property error:", error);
 
-```
+
       toast.error(
         error?.message ||
         "Unable to save the property. Please try again."

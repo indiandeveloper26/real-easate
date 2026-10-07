@@ -126,8 +126,8 @@ export default function ChatPage() {
             const fetchedProperties = Array.isArray(data.properties)
                 ? data.properties
                 : Array.isArray(data.data?.properties)
-                ? data.data.properties
-                : [];
+                    ? data.data.properties
+                    : [];
 
             setMessages((prev) => [
                 ...prev,
@@ -238,19 +238,17 @@ export default function ChatPage() {
                             <div key={index} className="space-y-2">
                                 {/* Message Row */}
                                 <div
-                                    className={`flex items-start gap-2.5 ${
-                                        message.role === "user" ? "justify-end" : "justify-start"
-                                    }`}
+                                    className={`flex items-start gap-2.5 ${message.role === "user" ? "justify-end" : "justify-start"
+                                        }`}
                                 >
                                     {message.role === "assistant" && <CuteAiAvatar size="md" />}
 
                                     <div className="flex flex-col space-y-1 max-w-[88%] sm:max-w-[80%]">
                                         <div
-                                            className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-                                                message.role === "user"
+                                            className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${message.role === "user"
                                                     ? "rounded-tr-xs bg-blue-600 text-white font-medium shadow-md shadow-blue-600/10 ml-auto"
                                                     : "rounded-tl-xs border border-slate-200/90 bg-slate-50/80 text-[#0b214a] shadow-xs"
-                                            }`}
+                                                }`}
                                         >
                                             <div className="whitespace-pre-wrap">{message.content}</div>
 
@@ -284,9 +282,8 @@ export default function ChatPage() {
 
                                         {message.time && (
                                             <span
-                                                className={`text-[10px] text-slate-400 px-1 ${
-                                                    message.role === "user" ? "text-right" : "text-left"
-                                                }`}
+                                                className={`text-[10px] text-slate-400 px-1 ${message.role === "user" ? "text-right" : "text-left"
+                                                    }`}
                                             >
                                                 {message.time}
                                             </span>
@@ -381,8 +378,8 @@ export default function ChatPage() {
                                                                         prop._id
                                                                             ? `/properties/${encodeURIComponent(prop._id)}`
                                                                             : prop.slug
-                                                                            ? `/properties/${encodeURIComponent(prop.slug)}`
-                                                                            : "/properties"
+                                                                                ? `/properties/${encodeURIComponent(prop.slug)}`
+                                                                                : "/properties"
                                                                     }
                                                                     className="flex-1 rounded-xl bg-[#0b214a] py-2 text-center text-xs font-bold text-white hover:bg-blue-700 transition shadow-xs"
                                                                 >
@@ -422,7 +419,7 @@ export default function ChatPage() {
                                     <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-blue-600 [animation-delay:-0.15s]"></span>
                                     <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-blue-600"></span>
                                 </span>
-                                <span className="font-semibold text-slate-600">Shortlisting best homes...</span>
+                                <span className="font-semibold text-slate-600">Shortlisting best properties...</span>
                             </div>
                         </div>
                     )}

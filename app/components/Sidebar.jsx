@@ -73,8 +73,6 @@ export default function Sidebar() {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
-
-  // Public website ke links.
   const navLinks = [
     {
       name: "Home",
@@ -86,15 +84,12 @@ export default function Sidebar() {
       href: "/properties",
       icon: Building2,
     },
-    {
-      name: "Projects",
-      href: "/projects",
-      icon: Briefcase,
-    },
+
     {
       name: "Ask AI",
       href: "/chat-bot",
       icon: Bot,
+      highlight: true, // AI feature ko visually highlight karne ke liye
     },
   ];
 
@@ -183,6 +178,8 @@ export default function Sidebar() {
           </Link>
 
           {/* Desktop navigation */}
+
+
           <nav className="hidden items-center gap-8 text-sm font-medium lg:flex">
             {navLinks.map((item) => {
               const Icon = item.icon;
@@ -194,15 +191,10 @@ export default function Sidebar() {
                   className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-gray-100"
                 >
                   <Icon size={17} />
-
-
-
-
+                  <span>{item.name}</span>
                 </Link>
               );
             })}
-
-
           </nav>
 
           {/* Right side */}
@@ -446,7 +438,7 @@ export default function Sidebar() {
             </button>
           ) : (
             <div className="mt-3 grid grid-cols-2 gap-2">
-             
+
               <Link
                 href="/auth/login"
                 onClick={closeSidebar}
@@ -464,8 +456,8 @@ export default function Sidebar() {
                 <UserPlus className="h-4 w-4" />
                 Register
               </Link>
-               <span className="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">
-                v-1.0.6
+              <span className="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">
+                v-1.0.7
               </span>
             </div>
           )}

@@ -35,11 +35,10 @@ const adminLinks = [
     href: "/admin/properties_List",
     icon: ListChecks,
   },
-  {
-    name: "AI Analytics",
-    href: "/admin/ai-analytics",
-    icon: Sparkles,
-  },
+
+  
+
+
   {
     name: "admin inquiries",
     href: "/admin/inquiries",
