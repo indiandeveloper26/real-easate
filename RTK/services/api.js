@@ -12,7 +12,9 @@ export const api = createApi({
     "Property",
     "Enquiries",
     "AdminInquiries",
-    
+    "AdminDashboard",
+
+
     "Properties",
     "User",
   ],

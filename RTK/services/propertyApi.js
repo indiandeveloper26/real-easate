@@ -82,6 +82,16 @@ export const propertyApi = api.injectEndpoints({
     }),
 
 
+    
+    getAdminDashboard: builder.query({
+      query: (id = 7) => ({
+        url: `/admin/dashboard/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["AdminDashboard"],
+      keepUnusedDataFor: 600,
+    }),
+
 
 
 
@@ -187,6 +197,7 @@ export const {
   useGetRecentPropertiesQuery,
   useGetPropertyQuery,
   useCreatePropertyMutation,
+  useGetAdminDashboardQuery,
   useUpdatePropertyMutation,
   useDeletePropertyMutation,
   useGetFilteredPropertiesQuery,

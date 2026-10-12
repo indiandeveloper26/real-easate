@@ -1,13 +1,3 @@
-
-
-
-
-
-
-
-
-
-
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -16,8 +6,6 @@ import { usePathname } from "next/navigation";
 import {
   Home,
   Building2,
-  Briefcase,
-  Info,
   PhoneCall,
   Heart,
   LogIn,
@@ -26,22 +14,29 @@ import {
   X,
   User,
   LogOut,
-  MessageCircle,
   Bot,
 } from "lucide-react";
 import Swal from "sweetalert2";
 
 import { useAdminAuthStore } from "../../RTK/store/Zustand/useAdminAuthStore";
 
+const APP_VERSION = "v-1.0.9";
+
+function VersionBadge() {
+  return (
+    <span className="inline-flex shrink-0 items-center rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">
+      {APP_VERSION}
+    </span>
+  );
+}
+
 export default function Sidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const pathname = usePathname();
 
-  const { admin, isAuthenticated, clearAdmin } =
-    useAdminAuthStore();
+  const { admin, isAuthenticated, clearAdmin } = useAdminAuthStore();
 
-  // Admin pages par public navbar/sidebar render nahi hoga.
   const isAdminRoute = pathname?.startsWith("/admin");
 
   useEffect(() => {
@@ -50,7 +45,6 @@ export default function Sidebar() {
     }
   }, [isAdminRoute]);
 
-  // Sidebar open hone par background scroll lock.
   useEffect(() => {
     document.body.style.overflow = isSidebarOpen ? "hidden" : "";
 
@@ -59,7 +53,6 @@ export default function Sidebar() {
     };
   }, [isSidebarOpen]);
 
-  // Escape key se sidebar close.
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
@@ -73,6 +66,7 @@ export default function Sidebar() {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
+
   const navLinks = [
     {
       name: "Home",
@@ -84,12 +78,11 @@ export default function Sidebar() {
       href: "/properties",
       icon: Building2,
     },
-
     {
       name: "Ask AI",
       href: "/chat-bot",
       icon: Bot,
-      highlight: true, // AI feature ko visually highlight karne ke liye
+      highlight: true,
     },
   ];
 
@@ -149,8 +142,7 @@ export default function Sidebar() {
     }
   };
 
-  // IMPORTANT: Admin routes par public navbar return nahi hoga.
-  // Admin ka apna layout /admin/layout.jsx mein hoga.
+  // Public navbar/sidebar ko admin routes par render nahi karna.
   if (isAdminRoute) {
     return null;
   }
@@ -160,14 +152,14 @@ export default function Sidebar() {
       {/* ================= PUBLIC NAVBAR ================= */}
       <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/95 backdrop-blur-md">
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          {/* Logo */}
-          <Link href="/" className="group flex items-center gap-2">
-            <div className="rounded-xl bg-blue-600 p-2 text-white transition group-hover:bg-blue-700">
+          {/* Logo + Version */}
+          <Link href="/" className="group flex min-w-0 items-center gap-2">
+            <div className="shrink-0 rounded-xl bg-blue-600 p-2 text-white transition group-hover:bg-blue-700">
               <Home className="h-6 w-6" />
             </div>
 
-            <div>
-              <span className="text-2xl font-black tracking-tight text-blue-900">
+            <div className="min-w-0">
+              <span className="block whitespace-nowrap text-xl font-black tracking-tight text-blue-900 sm:text-2xl">
                 Dream<span className="text-blue-600">Home</span>
               </span>
 
@@ -175,20 +167,30 @@ export default function Sidebar() {
                 Your Dream, Our Priority
               </p>
             </div>
+
+            <VersionBadge />
           </Link>
 
-          {/* Desktop navigation */}
-
-
-          <nav className="hidden items-center gap-8 text-sm font-medium lg:flex">
+          {/* Desktop Navigation */}
+          <nav className="hidden items-center gap-4 text-sm font-medium lg:flex xl:gap-8">
             {navLinks.map((item) => {
               const Icon = item.icon;
+
+              const isActive =
+                item.href === "/"
+                  ? pathname === "/"
+                  : pathname === item.href ||
+                    pathname.startsWith(`${item.href}/`);
 
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-gray-100"
+                  className={`flex items-center gap-2 rounded-lg px-3 py-2 transition ${
+                    isActive
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-slate-700 hover:bg-gray-100 hover:text-blue-600"
+                  }`}
                 >
                   <Icon size={17} />
                   <span>{item.name}</span>
@@ -197,8 +199,8 @@ export default function Sidebar() {
             })}
           </nav>
 
-          {/* Right side */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          {/* Right Side */}
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             {/* Phone */}
             <a
               href="tel:+919876543210"
@@ -264,7 +266,7 @@ export default function Sidebar() {
               </>
             )}
 
-            {/* Menu button */}
+            {/* Menu Button */}
             <button
               type="button"
               onClick={() => setIsSidebarOpen(true)}
@@ -283,54 +285,60 @@ export default function Sidebar() {
         type="button"
         aria-label="Close menu overlay"
         onClick={closeSidebar}
-        className={`fixed inset-0 z-50 bg-slate-950/50 backdrop-blur-sm transition-opacity duration-300 ${isSidebarOpen
-          ? "pointer-events-auto opacity-100"
-          : "pointer-events-none opacity-0"
-          }`}
+        className={`fixed inset-0 z-50 bg-slate-950/50 backdrop-blur-sm transition-opacity duration-300 ${
+          isSidebarOpen
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0"
+        }`}
       />
 
       {/* ================= PUBLIC SIDEBAR ================= */}
       <aside
         aria-label="Website navigation"
         aria-hidden={!isSidebarOpen}
-        className={`fixed right-0 top-0 z-[60] flex h-[100dvh] w-[88%] flex-col bg-white shadow-2xl transition-transform duration-300 ease-out sm:w-[380px] ${isSidebarOpen ? "translate-x-0" : "translate-x-full"
-          }`}
+        className={`fixed right-0 top-0 z-[60] flex h-[100dvh] w-[88%] flex-col bg-white shadow-2xl transition-transform duration-300 ease-out sm:w-[380px] ${
+          isSidebarOpen ? "translate-x-0" : "translate-x-full"
+        }`}
       >
-        {/* Sidebar header */}
+        {/* Sidebar Header + Version */}
         <div className="flex shrink-0 items-center justify-between border-b border-slate-100 p-5">
           <Link
             href="/"
             onClick={closeSidebar}
-            className="flex items-center gap-2"
+            className="flex min-w-0 items-center gap-3"
           >
-            <div className="rounded-xl bg-blue-600 p-2 text-white">
+            <div className="shrink-0 rounded-xl bg-blue-600 p-2 text-white">
               <Home className="h-5 w-5" />
             </div>
 
-            <div>
-              <span className="text-xl font-black tracking-tight text-blue-900">
+            <div className="min-w-0">
+              <span className="block whitespace-nowrap text-xl font-black tracking-tight text-blue-900">
                 Dream<span className="text-blue-600">Home</span>
               </span>
 
               <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400">
                 Your Dream, Our Priority
               </p>
+
+              <div className="mt-1">
+                <VersionBadge />
+              </div>
             </div>
           </Link>
 
           <button
             type="button"
             onClick={closeSidebar}
-            className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+            className="shrink-0 rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
             aria-label="Close menu"
           >
             <X className="h-6 w-6" />
           </button>
         </div>
 
-        {/* Sidebar content */}
+        {/* Sidebar Content */}
         <div className="flex-1 overflow-y-auto px-4 py-6">
-          {/* Logged-in user */}
+          {/* Logged-in Admin */}
           {isAuthenticated && admin && (
             <div className="mb-6 rounded-2xl border border-blue-100 bg-blue-50 p-4">
               <div className="flex items-center gap-3">
@@ -366,7 +374,7 @@ export default function Sidebar() {
             </div>
           )}
 
-          {/* Navigation links */}
+          {/* Navigation Links */}
           <nav className="space-y-2">
             {navLinks.map((item) => {
               const Icon = item.icon;
@@ -375,17 +383,18 @@ export default function Sidebar() {
                 item.href === "/"
                   ? pathname === "/"
                   : pathname === item.href ||
-                  pathname.startsWith(`${item.href}/`);
+                    pathname.startsWith(`${item.href}/`);
 
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={closeSidebar}
-                  className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${isActive
-                    ? "bg-blue-50 font-semibold text-blue-600"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-blue-600"
-                    }`}
+                  className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${
+                    isActive
+                      ? "bg-blue-50 font-semibold text-blue-600"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-blue-600"
+                  }`}
                 >
                   <Icon className="h-5 w-5" />
                   {item.name}
@@ -407,7 +416,7 @@ export default function Sidebar() {
           </div>
         </div>
 
-        {/* Sidebar footer */}
+        {/* Sidebar Footer */}
         <div className="shrink-0 border-t border-slate-100 bg-slate-50/70 p-5">
           <a
             href="tel:+919876543210"
@@ -438,7 +447,6 @@ export default function Sidebar() {
             </button>
           ) : (
             <div className="mt-3 grid grid-cols-2 gap-2">
-
               <Link
                 href="/auth/login"
                 onClick={closeSidebar}
@@ -456,9 +464,6 @@ export default function Sidebar() {
                 <UserPlus className="h-4 w-4" />
                 Register
               </Link>
-              <span className="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">
-                v-1.0.8
-              </span>
             </div>
           )}
         </div>
@@ -466,4 +471,3 @@ export default function Sidebar() {
     </>
   );
 }
-
